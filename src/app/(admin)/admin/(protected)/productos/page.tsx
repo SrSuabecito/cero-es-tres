@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { priceLabel } from "@/lib/menu";
 import { toggleAvailable } from "./actions";
@@ -72,6 +73,13 @@ export default async function ProductosPage({
             Filtrar
           </button>
         </form>
+
+        <Link
+          href="/admin/productos/nuevo"
+          className="rounded-lg bg-[#EF7C1B] px-4 py-2 text-sm font-bold text-[#17130F]"
+        >
+          + Nuevo producto
+        </Link>
       </div>
 
       {error && (
@@ -117,6 +125,12 @@ export default async function ProductosPage({
                 />
               </button>
             </form>
+            <Link
+              href={`/admin/productos/${p.id}/editar`}
+              className="shrink-0 rounded-lg border border-[#EF7C1B]/40 px-3 py-2 text-sm font-semibold text-[#F0B77C]"
+            >
+              Editar
+            </Link>
           </div>
         ))}
       </div>
