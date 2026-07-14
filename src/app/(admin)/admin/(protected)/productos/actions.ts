@@ -3,6 +3,35 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getAnthropicClient } from "@/lib/anthropic/client";
+
+export async function generateProductDescription(input: {
+  name: string;
+  category: string;
+  currentDescription: string;
+}): Promise<{ description: string } | { error: string }> {
+  if (!input.name.trim()) {
+    return { error: "Escribe primero el nombre del platillo." };
+  }
+
+  const prompt = `Eres el redactor de menú de la cafetería mexicana 'Cero es tres'. Escribe UNA sola descripción apetitosa y natural en español, de máximo 22 palabras, para el platillo '${input.name}' (categoría: ${input.category || "sin categoría"}). Base actual: '${input.currentDescription.trim() || "sin descripción"}'. Devuelve solo la descripción, sin comillas ni prefijos.`;
+
+  try {
+    const message = await getAnthropicClient().messages.create({
+      model: "claude-haiku-4-5",
+      max_tokens: 120,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const text = message.content.find((b) => b.type === "text")?.text.trim();
+    if (!text) {
+      return { error: "La IA no devolvió una descripción." };
+    }
+    return { description: text };
+  } catch {
+    return { error: "No se pudo generar la descripción con IA." };
+  }
+}
 
 export async function toggleAvailable(id: number, available: boolean) {
   const supabase = await createClient();

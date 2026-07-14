@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { generateProductDescription } from "@/app/(admin)/admin/(protected)/productos/actions";
 
 type Category = { id: number; name: string };
 type Variant = { label: string; price: number };
@@ -33,6 +34,32 @@ export function ProductForm({
     variants && variants.length > 0 ? variants : [{ label: "", price: 0 }]
   );
 
+  const [name, setName] = useState(product?.name ?? "");
+  const [categoryId, setCategoryId] = useState(
+    String(product?.category_id ?? categories[0]?.id ?? "")
+  );
+  const [description, setDescription] = useState(product?.description ?? "");
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [isGenerating, startGenerating] = useTransition();
+
+  const categoryName = categories.find((c) => String(c.id) === categoryId)?.name ?? "";
+
+  function handleGenerateDescription() {
+    setAiError(null);
+    startGenerating(async () => {
+      const result = await generateProductDescription({
+        name,
+        category: categoryName,
+        currentDescription: description,
+      });
+      if ("error" in result) {
+        setAiError(result.error);
+        return;
+      }
+      setDescription(result.description);
+    });
+  }
+
   return (
     <form action={action} className="flex max-w-xl flex-col gap-5">
       <input type="hidden" name="price_mode" value={priceMode} />
@@ -49,7 +76,8 @@ export function ProductForm({
         </label>
         <input
           name="name"
-          defaultValue={product?.name}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           required
           className="mt-2 w-full rounded-lg border border-white/10 bg-[#201F27] px-3 py-2 text-[#ECEAE4] outline-none"
         />
@@ -61,7 +89,8 @@ export function ProductForm({
         </label>
         <select
           name="category_id"
-          defaultValue={product?.category_id}
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value)}
           required
           className="mt-2 w-full rounded-lg border border-white/10 bg-[#201F27] px-3 py-2 text-[#ECEAE4]"
         >
@@ -74,15 +103,30 @@ export function ProductForm({
       </div>
 
       <div>
-        <label className="block text-xs uppercase tracking-widest text-[#8E8A82]">
-          Descripción
-        </label>
+        <div className="flex items-center justify-between">
+          <label className="block text-xs uppercase tracking-widest text-[#8E8A82]">
+            Descripción
+          </label>
+          <button
+            type="button"
+            onClick={handleGenerateDescription}
+            disabled={isGenerating || !name.trim()}
+            className="rounded-lg border border-white/10 px-3 py-1 text-xs font-semibold text-[#B4B0A8] disabled:opacity-40"
+          >
+            {isGenerating ? "Generando…" : "✨ Generar con IA"}
+          </button>
+        </div>
         <textarea
           name="description"
-          defaultValue={product?.description ?? ""}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           rows={3}
           className="mt-2 w-full rounded-lg border border-white/10 bg-[#201F27] px-3 py-2 text-[#ECEAE4] outline-none"
         />
+        <p className="mt-1 text-xs text-[#6B6862]">
+          La IA propone un texto; revísalo o edítalo antes de guardar.
+        </p>
+        {aiError && <p className="mt-1 text-xs text-red-400">{aiError}</p>}
       </div>
 
       <div>
