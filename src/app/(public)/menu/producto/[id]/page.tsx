@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { ProductPhoto } from "@/components/product-photo";
 import { VariantPicker } from "@/components/variant-picker";
+import { ScrollReveal } from "@/components/menu/scroll-reveal";
 
 export default async function ProductPage({
   params,
@@ -32,7 +33,7 @@ export default async function ProductPage({
     .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-md bg-[#F6F0E6]">
+    <div className="mx-auto min-h-screen w-full max-w-md">
       <div className="relative h-60 bg-[#E6DCC9]">
         <ProductPhoto
           url={product?.photo_url}
@@ -53,23 +54,23 @@ export default async function ProductPage({
         )}
 
         {product && (
-          <>
-            <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9A8E7C]">
+          <ScrollReveal>
+            <div className="text-[11px] font-semibold uppercase tracking-widest text-[#8C8073]">
               {category?.name}
             </div>
             <div className="mt-1 flex items-start justify-between gap-3">
-              <h1 className="text-2xl font-bold leading-tight text-[#17130F]">
+              <h1 className="font-menu-display text-2xl font-bold leading-tight text-[#17130F]">
                 {product.name}
               </h1>
               {!variants.length && product.price != null && (
-                <span className="whitespace-nowrap text-xl font-bold text-[#D9660A]">
+                <span className="font-menu-display whitespace-nowrap text-xl font-bold text-[#EF7C1B]">
                   ${product.price}
                 </span>
               )}
             </div>
 
             {product.description && (
-              <p className="mt-2 text-sm leading-relaxed text-[#6B6259]">
+              <p className="mt-2 text-sm leading-relaxed text-[#8C8073]">
                 {product.description}
               </p>
             )}
@@ -88,7 +89,7 @@ export default async function ProductPage({
             )}
 
             {variants.length > 0 && <VariantPicker variants={variants} />}
-          </>
+          </ScrollReveal>
         )}
       </div>
     </div>
