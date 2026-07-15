@@ -1,9 +1,11 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getAnthropicClient } from "@/lib/anthropic/client";
+import { uploadImageFromUrl } from "@/lib/supabase/upload-image";
 
 export async function generateProductDescription(input: {
   name: string;
@@ -31,6 +33,46 @@ export async function generateProductDescription(input: {
   } catch {
     return { error: "No se pudo generar la descripción con IA." };
   }
+}
+
+export async function setGeneratedImageAsProductPhoto(
+  productId: number,
+  imageUrl: string
+): Promise<{ success: true } | { error: string }> {
+  const supabase = await createClient();
+
+  const { data: product } = await supabase
+    .from("products")
+    .select("photo_url")
+    .eq("id", productId)
+    .single();
+
+  if (product?.photo_url) {
+    return { error: "Este platillo ya tiene una foto." };
+  }
+
+  const uploaded = await uploadImageFromUrl(
+    supabase,
+    "product-photos",
+    `${productId}-${randomUUID()}.jpg`,
+    imageUrl
+  );
+  if ("error" in uploaded) {
+    return uploaded;
+  }
+
+  const { error } = await supabase
+    .from("products")
+    .update({ photo_url: uploaded.publicUrl })
+    .eq("id", productId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/admin/productos");
+  revalidatePath("/menu", "layout");
+  return { success: true as const };
 }
 
 export async function toggleAvailable(id: number, available: boolean) {

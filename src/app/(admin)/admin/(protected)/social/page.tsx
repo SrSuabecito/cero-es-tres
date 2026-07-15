@@ -3,17 +3,20 @@ import { SocialComposer } from "@/components/admin/social-composer";
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { togglePublished, deleteSocialPost } from "./actions";
 
+// Image generation can take close to a minute; extend this page's Server Actions.
+export const maxDuration = 90;
+
 export default async function SocialPage() {
   const supabase = await createClient();
 
   const { data: products } = await supabase
     .from("products")
-    .select("id, name, description")
+    .select("id, name, description, photo_url")
     .order("name");
 
   const { data: posts, error } = await supabase
     .from("social_post")
-    .select("id, network, tone, content, published, product_id")
+    .select("id, network, tone, content, image_url, published, product_id")
     .order("created_at", { ascending: false });
 
   const productName = new Map((products ?? []).map((p) => [p.id, p.name]));
@@ -62,6 +65,14 @@ export default async function SocialPage() {
             <p className="mt-2 whitespace-pre-wrap text-sm text-[#ECEAE4]">
               {post.content}
             </p>
+            {post.image_url && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={post.image_url}
+                alt=""
+                className="mt-2 w-full max-w-xs rounded-lg object-cover"
+              />
+            )}
             <div className="mt-3 flex gap-2">
               <form
                 action={togglePublished.bind(

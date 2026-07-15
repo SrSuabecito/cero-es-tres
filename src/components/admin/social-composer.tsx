@@ -3,10 +3,17 @@
 import { useState, useTransition } from "react";
 import {
   generateSocialPost,
+  generateProductImage,
   saveSocialPost,
 } from "@/app/(admin)/admin/(protected)/social/actions";
+import { setGeneratedImageAsProductPhoto } from "@/app/(admin)/admin/(protected)/productos/actions";
 
-type Product = { id: number; name: string; description: string | null };
+type Product = {
+  id: number;
+  name: string;
+  description: string | null;
+  photo_url: string | null;
+};
 
 const NETWORKS = ["Instagram", "Facebook", "TikTok"];
 const TONES = ["Entusiasta", "Cercano y cálido", "Elegante", "Divertido"];
@@ -16,12 +23,26 @@ export function SocialComposer({ products }: { products: Product[] }) {
   const [network, setNetwork] = useState(NETWORKS[0]);
   const [tone, setTone] = useState(TONES[0]);
   const [content, setContent] = useState("");
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [productPhotoDone, setProductPhotoDone] = useState(false);
+  const [productPhotoError, setProductPhotoError] = useState<string | null>(null);
   const [isGenerating, startGenerating] = useTransition();
+  const [isGeneratingImage, startGeneratingImage] = useTransition();
   const [isSaving, startSaving] = useTransition();
+  const [isSettingProductPhoto, startSettingProductPhoto] = useTransition();
 
   const product = products.find((p) => String(p.id) === productId);
+
+  function handleProductChange(id: string) {
+    setProductId(id);
+    setImageUrl(null);
+    setImageError(null);
+    setProductPhotoDone(false);
+    setProductPhotoError(null);
+  }
 
   function handleGenerate() {
     setError(null);
@@ -41,6 +62,24 @@ export function SocialComposer({ products }: { products: Product[] }) {
     });
   }
 
+  function handleGenerateImage() {
+    setImageError(null);
+    setNotice(null);
+    setProductPhotoDone(false);
+    setProductPhotoError(null);
+    startGeneratingImage(async () => {
+      const result = await generateProductImage({
+        name: product?.name ?? "",
+        description: product?.description ?? "",
+      });
+      if ("error" in result) {
+        setImageError(result.error);
+        return;
+      }
+      setImageUrl(result.imageUrl);
+    });
+  }
+
   function handleSave(published: boolean) {
     setError(null);
     setNotice(null);
@@ -51,6 +90,7 @@ export function SocialComposer({ products }: { products: Product[] }) {
         content,
         productId: product?.id ?? null,
         published,
+        imageUrl,
       });
       if ("error" in result) {
         setError(result.error);
@@ -60,6 +100,21 @@ export function SocialComposer({ products }: { products: Product[] }) {
         published ? "Guardado y marcado como publicado." : "Guardado como borrador."
       );
       setContent("");
+      setImageUrl(null);
+      setProductPhotoDone(false);
+    });
+  }
+
+  function handleUseAsProductPhoto() {
+    if (!product || !imageUrl) return;
+    setProductPhotoError(null);
+    startSettingProductPhoto(async () => {
+      const result = await setGeneratedImageAsProductPhoto(product.id, imageUrl);
+      if ("error" in result) {
+        setProductPhotoError(result.error);
+        return;
+      }
+      setProductPhotoDone(true);
     });
   }
 
@@ -72,7 +127,7 @@ export function SocialComposer({ products }: { products: Product[] }) {
           </label>
           <select
             value={productId}
-            onChange={(e) => setProductId(e.target.value)}
+            onChange={(e) => handleProductChange(e.target.value)}
             className="mt-2 w-full rounded-lg border border-white/10 bg-[#201F27] px-3 py-2 text-[#ECEAE4]"
           >
             {products.map((p) => (
@@ -137,6 +192,65 @@ export function SocialComposer({ products }: { products: Product[] }) {
           placeholder="Genera un borrador con IA o escribe el tuyo…"
           className="mt-2 w-full rounded-lg border border-white/10 bg-[#201F27] px-3 py-2 text-[#ECEAE4] outline-none"
         />
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between">
+          <label className="block text-xs uppercase tracking-widest text-[#8E8A82]">
+            Imagen (opcional)
+          </label>
+          <button
+            type="button"
+            onClick={handleGenerateImage}
+            disabled={isGeneratingImage || !product}
+            className="rounded-lg border border-white/10 px-3 py-1 text-xs font-semibold text-[#B4B0A8] disabled:opacity-40"
+          >
+            {isGeneratingImage ? "Generando imagen…" : "🖼️ Generar imagen con IA"}
+          </button>
+        </div>
+
+        {isGeneratingImage && (
+          <p className="mt-2 text-xs text-[#8E8A82]">
+            Esto puede tardar hasta un minuto. Puedes seguir usando el resto
+            del panel mientras se genera.
+          </p>
+        )}
+        {imageError && <p className="mt-2 text-xs text-red-400">{imageError}</p>}
+
+        {imageUrl && (
+          <div className="mt-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={imageUrl}
+              alt="Imagen generada para la publicación"
+              className="w-full max-w-xs rounded-lg object-cover"
+            />
+            <p className="mt-1 text-xs text-[#6B6862]">
+              Revisa la imagen antes de guardar — no se sube a ningún lado
+              hasta que confirmes.
+            </p>
+
+            {product && !product.photo_url && (
+              <div className="mt-2">
+                <button
+                  type="button"
+                  onClick={handleUseAsProductPhoto}
+                  disabled={isSettingProductPhoto || productPhotoDone}
+                  className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-[#B4B0A8] disabled:opacity-40"
+                >
+                  {productPhotoDone
+                    ? "✓ Usada como foto del producto"
+                    : isSettingProductPhoto
+                      ? "Guardando…"
+                      : `Usar esta imagen como foto de "${product.name}"`}
+                </button>
+                {productPhotoError && (
+                  <p className="mt-1 text-xs text-red-400">{productPhotoError}</p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {error && <p className="text-sm text-red-400">{error}</p>}

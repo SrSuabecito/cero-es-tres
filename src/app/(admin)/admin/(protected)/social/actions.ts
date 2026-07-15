@@ -1,8 +1,12 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getAnthropicClient } from "@/lib/anthropic/client";
+import { getFalClient } from "@/lib/fal/client";
+import { uploadImageFromUrl } from "@/lib/supabase/upload-image";
+import { ApiError as FalApiError } from "@fal-ai/client";
 
 export async function generateSocialPost(input: {
   network: string;
@@ -33,12 +37,53 @@ export async function generateSocialPost(input: {
   }
 }
 
+export async function generateProductImage(input: {
+  name: string;
+  description: string;
+}): Promise<{ imageUrl: string } | { error: string }> {
+  if (!input.name.trim()) {
+    return { error: "Selecciona un platillo primero." };
+  }
+
+  const prompt = `Fotografía de comida profesional de '${input.name}'${
+    input.description.trim() ? `, ${input.description.trim()}` : ""
+  }, para el menú de la cafetería mexicana 'Cero es tres'. Foto realista, bien iluminada, de cerca, sobre una mesa de madera, estilo editorial de restaurante. Sin texto, sin logotipos, sin personas.`;
+
+  try {
+    const result = await getFalClient().subscribe(
+      "fal-ai/bytedance/seedream/v4/text-to-image",
+      {
+        input: {
+          prompt,
+          image_size: "square_hd",
+        },
+      }
+    );
+
+    const imageUrl = result.data.images?.[0]?.url;
+    if (!imageUrl) {
+      return { error: "No se pudo generar la imagen." };
+    }
+    return { imageUrl };
+  } catch (err) {
+    console.error("generateProductImage failed:", err);
+    if (err instanceof FalApiError && err.status === 403) {
+      return {
+        error:
+          "La cuenta de Fal.ai no tiene créditos suficientes. Agrega saldo en fal.ai/dashboard/billing e inténtalo de nuevo.",
+      };
+    }
+    return { error: "No se pudo generar la imagen con IA." };
+  }
+}
+
 export async function saveSocialPost(input: {
   network: string;
   tone: string;
   content: string;
   productId: number | null;
   published: boolean;
+  imageUrl: string | null;
 }): Promise<{ success: true } | { error: string }> {
   const content = input.content.trim();
   if (!content) {
@@ -46,12 +91,28 @@ export async function saveSocialPost(input: {
   }
 
   const supabase = await createClient();
+
+  let storedImageUrl: string | null = null;
+  if (input.imageUrl) {
+    const uploaded = await uploadImageFromUrl(
+      supabase,
+      "post-images",
+      `social/${randomUUID()}.jpg`,
+      input.imageUrl
+    );
+    if ("error" in uploaded) {
+      return { error: uploaded.error };
+    }
+    storedImageUrl = uploaded.publicUrl;
+  }
+
   const { error } = await supabase.from("social_post").insert({
     network: input.network,
     tone: input.tone,
     content,
     product_id: input.productId,
     published: input.published,
+    image_url: storedImageUrl,
   });
 
   if (error) {
