@@ -23,10 +23,9 @@ export default function PublicLayout({
       className={`${bricolage.variable} ${inter.variable} font-menu-body min-h-screen`}
       style={{
         backgroundColor: "#F6F0E6",
-        backgroundImage:
-          "linear-gradient(rgba(246, 240, 230, 0.5), rgba(246, 240, 230, 0.5)), url(/menu-bg-granos-cafe.webp)",
+        backgroundImage: "url(/menu-bg-lineas.webp)",
         backgroundRepeat: "repeat",
-        backgroundSize: "260px 260px",
+        backgroundSize: "300px 300px",
       }}
     >
       <ScrollFadeEdges />
