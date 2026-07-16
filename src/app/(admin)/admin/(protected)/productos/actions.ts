@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getAnthropicClient } from "@/lib/anthropic/client";
 import { uploadImageFromUrl } from "@/lib/supabase/upload-image";
+import { brand } from "@/brand.config";
 
 export async function generateProductDescription(input: {
   name: string;
@@ -16,7 +17,7 @@ export async function generateProductDescription(input: {
     return { error: "Escribe primero el nombre del platillo." };
   }
 
-  const prompt = `Eres el redactor de menú de la cafetería mexicana 'Cero es tres'. Escribe UNA sola descripción apetitosa y natural en español, de máximo 22 palabras, para el platillo '${input.name}' (categoría: ${input.category || "sin categoría"}). Base actual: '${input.currentDescription.trim() || "sin descripción"}'. Devuelve solo la descripción, sin comillas ni prefijos.`;
+  const prompt = `Eres el redactor de menú de la ${brand.businessType} '${brand.name}'. Escribe UNA sola descripción apetitosa y natural en español, de máximo 22 palabras, para el platillo '${input.name}' (categoría: ${input.category || "sin categoría"}). Base actual: '${input.currentDescription.trim() || "sin descripción"}'. Devuelve solo la descripción, sin comillas ni prefijos.`;
 
   try {
     const message = await getAnthropicClient().messages.create({

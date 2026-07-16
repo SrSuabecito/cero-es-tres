@@ -56,7 +56,7 @@ export default async function CategoriasPage({
             />
             <button
               type="submit"
-              className="rounded-lg bg-[#EF7C1B] px-3 py-2 text-sm font-bold text-[#17130F]"
+              className="bg-brand-orange text-brand-carbon rounded-lg px-3 py-2 text-sm font-bold"
             >
               Guardar
             </button>
@@ -101,7 +101,7 @@ export default async function CategoriasPage({
           />
           <button
             type="submit"
-            className="rounded-lg bg-[#EF7C1B] px-4 py-2 text-sm font-bold text-[#17130F]"
+            className="bg-brand-orange text-brand-carbon rounded-lg px-4 py-2 text-sm font-bold"
           >
             Crear
           </button>

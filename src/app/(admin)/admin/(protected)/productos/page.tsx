@@ -68,7 +68,7 @@ export default async function ProductosPage({
           </select>
           <button
             type="submit"
-            className="rounded-lg bg-[#EF7C1B] px-4 py-2 text-sm font-bold text-[#17130F]"
+            className="bg-brand-orange text-brand-carbon rounded-lg px-4 py-2 text-sm font-bold"
           >
             Filtrar
           </button>
@@ -76,7 +76,7 @@ export default async function ProductosPage({
 
         <Link
           href="/admin/productos/nuevo"
-          className="rounded-lg bg-[#EF7C1B] px-4 py-2 text-sm font-bold text-[#17130F]"
+          className="bg-brand-orange text-brand-carbon rounded-lg px-4 py-2 text-sm font-bold"
         >
           + Nuevo producto
         </Link>
@@ -99,7 +99,7 @@ export default async function ProductosPage({
               <div className="mt-0.5 flex items-center gap-2 text-xs text-[#8E8A82]">
                 <span>{categoryName.get(p.category_id)}</span>
                 {p.available && p.note && (
-                  <span className="rounded-full bg-[#EF7C1B]/15 px-2 py-0.5 font-bold text-[#F0B77C]">
+                  <span className="bg-brand-orange/15 rounded-full px-2 py-0.5 font-bold text-[#F0B77C]">
                     {p.note}
                   </span>
                 )}
@@ -127,7 +127,7 @@ export default async function ProductosPage({
             </form>
             <Link
               href={`/admin/productos/${p.id}/editar`}
-              className="shrink-0 rounded-lg border border-[#EF7C1B]/40 px-3 py-2 text-sm font-semibold text-[#F0B77C]"
+              className="border-brand-orange/40 shrink-0 rounded-lg border px-3 py-2 text-sm font-semibold text-[#F0B77C]"
             >
               Editar
             </Link>

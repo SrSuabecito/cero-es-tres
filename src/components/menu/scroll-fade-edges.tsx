@@ -31,7 +31,8 @@ export function ScrollFadeEdges() {
         className="pointer-events-none fixed top-0 left-1/2 z-20 h-7 w-full max-w-md -translate-x-1/2 transition-opacity duration-[250ms] ease-out"
         style={{
           opacity: topOpacity,
-          background: "linear-gradient(to bottom, #F6F0E6, transparent)",
+          background:
+            "linear-gradient(to bottom, var(--brand-cream), transparent)",
         }}
       />
       <div
@@ -39,7 +40,8 @@ export function ScrollFadeEdges() {
         className="pointer-events-none fixed bottom-0 left-1/2 z-20 h-7 w-full max-w-md -translate-x-1/2 transition-opacity duration-[250ms] ease-out"
         style={{
           opacity: bottomOpacity,
-          background: "linear-gradient(to top, #F6F0E6, transparent)",
+          background:
+            "linear-gradient(to top, var(--brand-cream), transparent)",
         }}
       />
     </>

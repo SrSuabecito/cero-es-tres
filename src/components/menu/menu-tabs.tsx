@@ -7,8 +7,8 @@ export function MenuTabs({ group }: { group: "comer" | "beber" }) {
         href="/menu?tab=comer"
         className={`flex-1 rounded-xl py-2 text-center text-sm font-medium ${
           group === "comer"
-            ? "bg-[#17130F] text-[#F6F0E6]"
-            : "border border-[#D8D3C9] bg-white text-[#8C8073]"
+            ? "bg-brand-carbon text-brand-cream"
+            : "border-brand-border text-brand-muted border bg-white"
         }`}
       >
         Para comer
@@ -17,8 +17,8 @@ export function MenuTabs({ group }: { group: "comer" | "beber" }) {
         href="/menu?tab=beber"
         className={`flex-1 rounded-xl py-2 text-center text-sm font-medium ${
           group === "beber"
-            ? "bg-[#17130F] text-[#F6F0E6]"
-            : "border border-[#D8D3C9] bg-white text-[#8C8073]"
+            ? "bg-brand-carbon text-brand-cream"
+            : "border-brand-border text-brand-muted border bg-white"
         }`}
       >
         Para beber

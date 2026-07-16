@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { logout } from "../actions";
+import { brand } from "@/brand.config";
 
 export default async function AdminLayout({
   children,
@@ -21,7 +22,7 @@ export default async function AdminLayout({
     <div className="flex min-h-screen bg-[#111016] text-[#ECEAE4]">
       <aside className="flex w-64 shrink-0 flex-col gap-1 border-r border-white/5 p-4">
         <div className="px-2 pb-4">
-          <p className="font-semibold text-sm">Cero es tres</p>
+          <p className="font-semibold text-sm">{brand.name}</p>
           <p className="text-xs text-[#8E8A82]">Panel del negocio</p>
         </div>
 

@@ -55,22 +55,22 @@ export default async function ProductPage({
 
         {product && (
           <ScrollReveal>
-            <div className="text-[11px] font-semibold uppercase tracking-widest text-[#8C8073]">
+            <div className="text-brand-muted text-[11px] font-semibold uppercase tracking-widest">
               {category?.name}
             </div>
             <div className="mt-1 flex items-start justify-between gap-3">
-              <h1 className="font-menu-display text-2xl font-bold leading-tight text-[#17130F]">
+              <h1 className="font-menu-display text-brand-carbon text-2xl font-bold leading-tight">
                 {product.name}
               </h1>
               {!variants.length && product.price != null && (
-                <span className="font-menu-display whitespace-nowrap text-xl font-bold text-[#EF7C1B]">
+                <span className="font-menu-display text-brand-orange whitespace-nowrap text-xl font-bold">
                   ${product.price}
                 </span>
               )}
             </div>
 
             {product.description && (
-              <p className="mt-2 text-sm leading-relaxed text-[#8C8073]">
+              <p className="text-brand-muted mt-2 text-sm leading-relaxed">
                 {product.description}
               </p>
             )}

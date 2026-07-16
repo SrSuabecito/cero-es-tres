@@ -31,15 +31,15 @@ export default async function CategoryPage({
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5 py-8">
       <StickyFadeBar
         className="-mx-5 -mt-8 px-5 pt-8 pb-2"
-        activeClassName="bg-[#F6F0E6]/95 shadow-[0_4px_14px_rgba(0,0,0,0.07)] backdrop-blur"
+        activeClassName="bg-brand-cream/95 shadow-[0_4px_14px_rgba(0,0,0,0.07)] backdrop-blur"
       >
-        <Link href="/menu" className="text-sm text-[#8C8073]">
+        <Link href="/menu" className="text-brand-muted text-sm">
           ‹ Menú
         </Link>
-        <h1 className="font-menu-display mt-2 text-2xl font-semibold text-[#17130F]">
+        <h1 className="font-menu-display text-brand-carbon mt-2 text-2xl font-semibold">
           {category?.name ?? "Categoría"}
         </h1>
-        <div className="mt-1 text-xs tracking-widest text-[#8C8073]">
+        <div className="text-brand-muted mt-1 text-xs tracking-widest">
           {products?.length ?? 0} OPCIONES
         </div>
       </StickyFadeBar>
@@ -50,7 +50,7 @@ export default async function CategoryPage({
         </p>
       )}
 
-      <ul className="mt-4 flex flex-col divide-y divide-[#D8D3C9]">
+      <ul className="divide-brand-border mt-4 flex flex-col divide-y">
         {products?.map((p) => (
           <li key={p.id}>
             <ScrollReveal>
@@ -65,15 +65,15 @@ export default async function CategoryPage({
                 />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="font-menu-display font-semibold text-[#17130F]">
+                    <span className="font-menu-display text-brand-carbon font-semibold">
                       {p.name}
                     </span>
-                    <span className="font-menu-display whitespace-nowrap font-semibold text-[#EF7C1B]">
+                    <span className="font-menu-display text-brand-orange whitespace-nowrap font-semibold">
                       {priceLabel(p)}
                     </span>
                   </div>
                   {p.description && (
-                    <p className="mt-1 line-clamp-2 text-[13px] text-[#8C8073]">
+                    <p className="text-brand-muted mt-1 line-clamp-2 text-[13px]">
                       {p.description}
                     </p>
                   )}

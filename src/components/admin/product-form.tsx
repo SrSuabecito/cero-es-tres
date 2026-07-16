@@ -152,7 +152,7 @@ export function ProductForm({
               onClick={() => setPriceMode("single")}
               className={`rounded-md px-3 py-1 text-xs font-semibold ${
                 priceMode === "single"
-                  ? "bg-[#EF7C1B] text-[#17130F]"
+                  ? "bg-brand-orange text-brand-carbon"
                   : "text-[#8E8A82]"
               }`}
             >
@@ -163,7 +163,7 @@ export function ProductForm({
               onClick={() => setPriceMode("variants")}
               className={`rounded-md px-3 py-1 text-xs font-semibold ${
                 priceMode === "variants"
-                  ? "bg-[#EF7C1B] text-[#17130F]"
+                  ? "bg-brand-orange text-brand-carbon"
                   : "text-[#8E8A82]"
               }`}
             >
@@ -231,7 +231,7 @@ export function ProductForm({
           type="checkbox"
           name="available"
           defaultChecked={product?.available ?? true}
-          className="h-5 w-5 accent-[#EF7C1B]"
+          className="accent-brand-orange h-5 w-5"
         />
       </div>
 
@@ -249,7 +249,7 @@ export function ProductForm({
 
       <button
         type="submit"
-        className="mt-2 rounded-lg bg-[#EF7C1B] py-3 font-bold text-[#17130F]"
+        className="bg-brand-orange text-brand-carbon mt-2 rounded-lg py-3 font-bold"
       >
         Guardar
       </button>

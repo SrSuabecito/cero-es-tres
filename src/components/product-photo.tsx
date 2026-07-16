@@ -18,7 +18,8 @@ export function ProductPhoto({
     <div
       className={className}
       style={{
-        background: "linear-gradient(135deg, #B9AF9E, #D8D3C9)",
+        background:
+          "linear-gradient(135deg, var(--brand-taupe), var(--brand-border))",
       }}
     />
   );

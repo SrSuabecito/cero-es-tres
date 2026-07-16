@@ -1,4 +1,5 @@
 import { login } from "../actions";
+import { brand } from "@/brand.config";
 
 export default async function LoginPage({
   searchParams,
@@ -16,7 +17,7 @@ export default async function LoginPage({
         <h1 className="font-semibold text-xl text-white">
           Panel del negocio
         </h1>
-        <p className="mt-1 text-sm text-[#8E8A82]">Cero es Tres</p>
+        <p className="mt-1 text-sm text-[#8E8A82]">{brand.name}</p>
 
         <label
           htmlFor="email"
@@ -50,7 +51,7 @@ export default async function LoginPage({
 
         <button
           type="submit"
-          className="mt-6 w-full rounded-lg bg-[#EF7C1B] py-2 font-semibold text-[#17130F]"
+          className="bg-brand-orange text-brand-carbon mt-6 w-full rounded-lg py-2 font-semibold"
         >
           Entrar
         </button>

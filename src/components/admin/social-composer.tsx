@@ -269,7 +269,7 @@ export function SocialComposer({ products }: { products: Product[] }) {
           type="button"
           onClick={() => handleSave(true)}
           disabled={isSaving || !content.trim()}
-          className="rounded-lg bg-[#EF7C1B] px-4 py-2 text-sm font-bold text-[#17130F] disabled:opacity-40"
+          className="bg-brand-orange text-brand-carbon rounded-lg px-4 py-2 text-sm font-bold disabled:opacity-40"
         >
           Guardar y marcar publicado
         </button>

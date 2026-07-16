@@ -12,6 +12,12 @@
   --font-mono: var(--font-geist-mono);
   --font-menu-display: var(--font-bricolage);
   --font-menu-body: var(--font-inter);
+  --color-brand-cream: var(--brand-cream);
+  --color-brand-carbon: var(--brand-carbon);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-border: var(--brand-border);
+  --color-brand-muted: var(--brand-muted);
+  --color-brand-taupe: var(--brand-taupe);
 }
 
 @media (prefers-color-scheme: dark) {

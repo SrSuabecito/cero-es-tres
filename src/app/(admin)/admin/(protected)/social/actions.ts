@@ -7,6 +7,7 @@ import { getAnthropicClient } from "@/lib/anthropic/client";
 import { getFalClient } from "@/lib/fal/client";
 import { uploadImageFromUrl } from "@/lib/supabase/upload-image";
 import { ApiError as FalApiError } from "@fal-ai/client";
+import { brand } from "@/brand.config";
 
 export async function generateSocialPost(input: {
   network: string;
@@ -18,7 +19,7 @@ export async function generateSocialPost(input: {
     return { error: "Selecciona un platillo primero." };
   }
 
-  const prompt = `Eres community manager de la cafetería mexicana 'Cero es tres' (identidad naranja y negro, lema 'el sabor de la experiencia'). Tono: ${input.tone}. Crea una publicación para ${input.network} sobre '${input.productName}' (${input.productDescription.trim() || "sin descripción"}). Devuelve 2 o 3 líneas atractivas con 1-2 emojis y una última línea con 4-6 hashtags en español. Sin explicaciones ni comillas.`;
+  const prompt = `Eres community manager de la ${brand.businessType} '${brand.name}' (identidad naranja y negro, lema '${brand.tagline}'). Tono: ${input.tone}. Crea una publicación para ${input.network} sobre '${input.productName}' (${input.productDescription.trim() || "sin descripción"}). Devuelve 2 o 3 líneas atractivas con 1-2 emojis y una última línea con 4-6 hashtags en español. Sin explicaciones ni comillas.`;
 
   try {
     const message = await getAnthropicClient().messages.create({
@@ -47,7 +48,7 @@ export async function generateProductImage(input: {
 
   const prompt = `Fotografía de comida profesional de '${input.name}'${
     input.description.trim() ? `, ${input.description.trim()}` : ""
-  }, para el menú de la cafetería mexicana 'Cero es tres'. Foto realista, bien iluminada, de cerca, sobre una mesa de madera, estilo editorial de restaurante. Sin texto, sin logotipos, sin personas.`;
+  }, para el menú de la ${brand.businessType} '${brand.name}'. Foto realista, bien iluminada, de cerca, sobre una mesa de madera, estilo editorial de restaurante. Sin texto, sin logotipos, sin personas.`;
 
   try {
     const result = await getFalClient().subscribe(
